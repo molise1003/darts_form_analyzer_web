@@ -1,0 +1,19 @@
+{
+  "name": "darts-form-analyzer-web",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "ダーツフォーム分析 Web版 — 完全クライアントサイドで動く1本の動画分析ツール",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@mediapipe/tasks-vision": "^0.10.14"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5",
+    "vite": "^5.2.11"
+  }
+}

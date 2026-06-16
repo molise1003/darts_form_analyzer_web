@@ -1,0 +1,323 @@
+:root {
+  /* テーマトークン（SPEC 8b: 黒基調ダークテーマ） */
+  --bg: #0e0e0e;
+  --surface: #1c1c1e;
+  --surface-2: #242427;
+  --border: rgba(255, 255, 255, 0.1);
+  --accent: #4db6ac;
+  --accent-dim: rgba(77, 182, 172, 0.18);
+  --text: #ffffff;
+  --text-dim: rgba(255, 255, 255, 0.6);
+
+  --correct: #ffb74d;
+  --throw1: #64b5f6;
+  --throw2: #81c784;
+  --throw3: #ba68c8;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN',
+    'Noto Sans JP', Meiryo, sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+#app {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 24px 20px 64px;
+}
+
+h1 {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 4px;
+}
+
+.subtitle {
+  color: var(--text-dim);
+  font-size: 13px;
+  margin: 0 0 24px;
+}
+
+.muted {
+  color: var(--text-dim);
+}
+
+/* --- ボタン --------------------------------------------------------------- */
+button {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+button:hover:not(:disabled) {
+  background: #2e2e31;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+button.primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: #06302c;
+  font-weight: 600;
+}
+button.primary:hover:not(:disabled) {
+  background: #5ec4ba;
+}
+button.toggle.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+/* --- アップロード --------------------------------------------------------- */
+.drop-zone {
+  display: block;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  padding: 56px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.drop-zone:hover,
+.drop-zone.dragover {
+  border-color: var(--accent);
+  background: #19191b;
+}
+.drop-zone .big {
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+.drop-zone input {
+  display: none;
+}
+
+/* --- カード/パネル -------------------------------------------------------- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.card h2 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 12px;
+  color: var(--text-dim);
+  letter-spacing: 0.02em;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.spacer {
+  flex: 1;
+}
+
+/* --- 動画ステージ -------------------------------------------------------- */
+.stage {
+  position: relative;
+  width: 100%;
+  background: #000;
+  border-radius: var(--radius);
+  overflow: hidden;
+  aspect-ratio: 16 / 9;
+}
+.stage video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: #000;
+}
+.stage canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* --- 再生コントロール ----------------------------------------------------- */
+.controls {
+  margin-top: 12px;
+}
+.time {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-dim);
+  font-size: 13px;
+  min-width: 92px;
+  text-align: right;
+}
+
+/* --- タイムライン --------------------------------------------------------- */
+.timeline {
+  position: relative;
+  height: 56px;
+  margin: 8px 0 4px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  user-select: none;
+  touch-action: none;
+}
+.seg {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  border-radius: 6px;
+  opacity: 0.5;
+}
+.seg.is-ref {
+  opacity: 0.85;
+  outline: 2px solid var(--correct);
+  outline-offset: -1px;
+}
+.seg-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 12px;
+  font-weight: 600;
+  color: #06302c;
+  pointer-events: none;
+}
+.handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 12px;
+  cursor: ew-resize;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.handle::after {
+  content: '';
+  width: 3px;
+  height: 60%;
+  background: rgba(255, 255, 255, 0.85);
+  border-radius: 2px;
+}
+.handle.left {
+  left: -6px;
+}
+.handle.right {
+  right: -6px;
+}
+.playhead {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--accent);
+  pointer-events: none;
+}
+
+/* --- セレクタ群 ----------------------------------------------------------- */
+.pill-group {
+  display: inline-flex;
+  gap: 6px;
+}
+
+/* --- 進捗バー ------------------------------------------------------------- */
+.progress {
+  height: 6px;
+  background: var(--surface-2);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 8px;
+}
+.progress > div {
+  height: 100%;
+  width: 0;
+  background: var(--accent);
+  transition: width 0.1s linear;
+}
+
+/* --- 結果テーブル --------------------------------------------------------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+th,
+td {
+  text-align: right;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+}
+th:first-child,
+td:first-child {
+  text-align: left;
+}
+thead th {
+  color: var(--text-dim);
+  font-weight: 500;
+  font-size: 12px;
+}
+tr.is-ref td {
+  background: rgba(255, 183, 77, 0.08);
+}
+.dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+/* --- アドバイス ----------------------------------------------------------- */
+.advice {
+  border-left: 3px solid var(--accent);
+  background: var(--surface-2);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  margin-bottom: 10px;
+}
+.advice h3 {
+  font-size: 14px;
+  margin: 0 0 6px;
+}
+.advice ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.advice li {
+  margin: 3px 0;
+}
+
+.hidden {
+  display: none !important;
+}
