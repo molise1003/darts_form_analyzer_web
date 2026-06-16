@@ -218,7 +218,8 @@ function renderTimeline() {
     el.className = 'seg' + (i === refIndex ? ' is-ref' : '');
     el.style.left = `${msToPct(seg.startMs)}%`;
     el.style.width = `${msToPct(seg.endMs - seg.startMs)}%`;
-    el.style.background = THROW_COLORS[i] ?? '#888';
+    // 正解=アンバー / 他=各投の色（メトリクス・動画軌道と統一）
+    el.style.background = i === refIndex ? CORRECT_COLOR : THROW_COLORS[i] ?? '#888';
 
     const label = document.createElement('span');
     label.className = 'seg-label';
