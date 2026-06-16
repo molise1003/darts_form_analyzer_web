@@ -283,6 +283,7 @@ function renderRefPick() {
       renderRefPick();
       renderTimeline();
       if (results) runAnalyze(); // 既に分析済みなら基準を変えて再計算
+      draw(); // 動画オーバーレイを現在のrefで即時更新（seekedイベント待ちにしない）
     });
     refPick.appendChild(btn);
   });
@@ -304,6 +305,7 @@ function runAnalyze() {
   toggleOverlayBtn.classList.add('active');
   video.pause();
   seekTo(results[refIndex].releaseMs);
+  draw(); // refを変えた直後にオーバーレイをすぐ更新（seekedが発火しない場合に備える）
 }
 
 function renderMetrics(res: ThrowResult[]) {
