@@ -50,10 +50,11 @@ export function drawComparison(
   results.forEach((r) => {
     if (r.rawWrist.length === 0) return;
     const isRef = r.index === refIndex;
-    const baseColor = isRef ? CORRECT_COLOR : THROW_COLORS[r.index] ?? '#FFFFFF';
+    // 各投の色は固定（正解でも色は変えない）。正解は太さ＋アンバーのリングで示す。
+    const color = THROW_COLORS[r.index] ?? '#FFFFFF';
 
-    ctx.strokeStyle = isRef ? baseColor : hexAlpha(baseColor, 0.55);
-    ctx.lineWidth = isRef ? 3.5 : 2.5;
+    ctx.strokeStyle = isRef ? color : hexAlpha(color, 0.45);
+    ctx.lineWidth = isRef ? 4 : 2.5;
     ctx.beginPath();
     r.rawWrist.forEach((p, j) => {
       const x = p.x * w;
@@ -65,10 +66,21 @@ export function drawComparison(
 
     // 末尾（リリース付近）のマーカー
     const last = r.rawWrist[r.rawWrist.length - 1];
-    ctx.fillStyle = baseColor;
+    const lx = last.x * w;
+    const ly = last.y * h;
+    ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(last.x * w, last.y * h, isRef ? 6 : 4.5, 0, Math.PI * 2);
+    ctx.arc(lx, ly, isRef ? 6 : 4.5, 0, Math.PI * 2);
     ctx.fill();
+
+    // 正解フォームはアンバーのリングで強調（色は変えない）
+    if (isRef) {
+      ctx.strokeStyle = CORRECT_COLOR;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(lx, ly, 11, 0, Math.PI * 2);
+      ctx.stroke();
+    }
   });
 }
 
@@ -80,10 +92,10 @@ function segmentOf(ms: number, segments: ThrowSegment[]): number {
   return -1;
 }
 
-/** 区間インデックスに対応する軌道色（正解=アンバー / 区間外=淡い白）。 */
-function trailColorFor(segIdx: number, refIndex: number): string {
+/** 区間インデックスに対応する軌道色（各投で固定 / 区間外=淡い白）。 */
+function trailColorFor(segIdx: number): string {
   if (segIdx < 0) return hexAlpha('#FFFFFF', 0.3);
-  return segIdx === refIndex ? CORRECT_COLOR : THROW_COLORS[segIdx] ?? WRIST_COLOR;
+  return THROW_COLORS[segIdx] ?? WRIST_COLOR;
 }
 
 /**
@@ -107,14 +119,14 @@ export function drawPoseAtTime(
 
   const px = (p: Point) => ({ x: p.x * w, y: p.y * h });
 
-  // 現在時刻までの手首軌跡を、区間ごとの色で線分描画
+  // 現在時刻までの手首軌跡を、区間ごとの固定色で線分描画（正解は太線で強調）
   const trail = frames.filter((f) => f.timestampMs <= currentMs && f.wrist);
-  ctx.lineWidth = 3;
   for (let i = 1; i < trail.length; i++) {
     const a = px(trail[i - 1].wrist!);
     const b = px(trail[i].wrist!);
     const segIdx = segmentOf(trail[i].timestampMs, segments);
-    ctx.strokeStyle = hexAlpha(trailColorFor(segIdx, refIndex), 0.9);
+    ctx.strokeStyle = hexAlpha(trailColorFor(segIdx), 0.9);
+    ctx.lineWidth = segIdx === refIndex ? 4.5 : 3;
     ctx.beginPath();
     ctx.moveTo(a.x, a.y);
     ctx.lineTo(b.x, b.y);

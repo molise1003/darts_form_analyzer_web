@@ -198,7 +198,7 @@ button.toggle.active {
 }
 .seg.is-ref {
   opacity: 1;
-  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline: 2px solid var(--correct);
   outline-offset: 1px;
 }
 .seg-label {

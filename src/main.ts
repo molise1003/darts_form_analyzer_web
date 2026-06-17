@@ -4,12 +4,7 @@ import { createLandmarker, extractPoseFrames } from './pose';
 import { segmentThrows } from './segmenter';
 import { analyzeThrows } from './metrics';
 import { advise } from './advisor';
-import {
-  CORRECT_COLOR,
-  THROW_COLORS,
-  drawComparison,
-  drawPoseAtTime,
-} from './overlay';
+import { THROW_COLORS, drawComparison, drawPoseAtTime } from './overlay';
 import { clamp } from './utils';
 import type { PoseLandmarker } from '@mediapipe/tasks-vision';
 
@@ -218,8 +213,8 @@ function renderTimeline() {
     el.className = 'seg' + (i === refIndex ? ' is-ref' : '');
     el.style.left = `${msToPct(seg.startMs)}%`;
     el.style.width = `${msToPct(seg.endMs - seg.startMs)}%`;
-    // 正解=アンバー / 他=各投の色（メトリクス・動画軌道と統一）
-    el.style.background = i === refIndex ? CORRECT_COLOR : THROW_COLORS[i] ?? '#888';
+    // 各投の色は固定。正解は色を変えず is-ref のアンバー枠で示す。
+    el.style.background = THROW_COLORS[i] ?? '#888';
 
     const label = document.createElement('span');
     label.className = 'seg-label';
@@ -315,7 +310,7 @@ function renderMetrics(res: ThrowResult[]) {
   </tr></thead><tbody>`;
   res.forEach((r) => {
     const isRef = r.index === refIndex;
-    const color = isRef ? CORRECT_COLOR : THROW_COLORS[r.index];
+    const color = THROW_COLORS[r.index]; // 各投で固定（正解でも変えない）
     html += `<tr class="${isRef ? 'is-ref' : ''}">
       <td><span class="dot" style="background:${color}"></span>${r.index + 1}投目${isRef ? '（正解）' : ''}</td>
       <td>${fmt(r.elbowAngle, 1)}${r.elbowAngle == null ? '' : '°'}</td>
